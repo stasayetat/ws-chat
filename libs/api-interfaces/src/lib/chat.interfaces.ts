@@ -30,3 +30,12 @@ export interface SendMessageDto {
   receiverId: string;
   text: string;
 }
+
+export interface GetHistoryDto {
+  contactId: string;
+}
+
+export interface UserStatusChangedDto {
+  id: string;
+  status: UserStatus;
+}

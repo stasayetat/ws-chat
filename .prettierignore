@@ -1,6 +1,10 @@
-# Add files here to ignore them from prettier formatting
-/dist
-/coverage
-/.nx/cache
-/.nx/workspace-data
-.angular
+# Ignore everything
+*
+
+# Allow these folders
+!apps/
+!libs/
+
+# Allow all files inside them
+!apps/**
+!libs/**
