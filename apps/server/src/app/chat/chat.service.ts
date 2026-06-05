@@ -2,8 +2,8 @@ import { Contact, Message, User, UserStatus } from '@chat/api-interfaces';
 import { Inject, Injectable } from '@nestjs/common';
 
 import { MESSAGE_REPOSITORY, USER_REPOSITORY } from './chat.tokens';
-import { IMessageRepository } from './repositories/message-repository.interface';
-import { IUserRepository } from './repositories/user-repository.interface';
+import { IMessageRepository } from './message/message-repository.interface';
+import { IUserRepository } from './user/user-repository.interface';
 
 @Injectable()
 export class ChatService {

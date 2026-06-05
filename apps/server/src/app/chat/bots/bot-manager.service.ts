@@ -1,9 +1,9 @@
 import { Message } from '@chat/api-interfaces';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 
-import { Bot, EmitNewMessage } from './bots/bot.interface';
-import { ChatService } from './chat.service';
-import { BOT_TOKEN } from './chat.tokens';
+import { ChatService } from '../chat.service';
+import { BOT_TOKEN } from '../chat.tokens';
+import { Bot, EmitNewMessage } from './bot.interface';
 
 @Injectable()
 export class BotManagerService implements OnModuleInit {

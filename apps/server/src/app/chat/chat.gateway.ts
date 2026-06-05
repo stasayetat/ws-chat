@@ -18,10 +18,10 @@ import {
 import { Server, Socket } from 'socket.io';
 
 import { env } from '../env';
-import { BotManagerService } from './bot-manager.service';
+import { BotManagerService } from './bots/bot-manager.service';
 import { SpamBot } from './bots/spam.bot';
 import { ChatService } from './chat.service';
-import { UserSessionService } from './user-session.service';
+import { UserSessionService } from './user/user-session.service';
 
 @WebSocketGateway({ cors: { origin: env.CLIENT_URL } })
 export class ChatGateway

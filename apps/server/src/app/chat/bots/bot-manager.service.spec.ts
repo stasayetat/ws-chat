@@ -1,10 +1,10 @@
 import { Message } from '@chat/api-interfaces';
 import { Test } from '@nestjs/testing';
 
+import { ChatService } from '../chat.service';
+import { BOT_TOKEN } from '../chat.tokens';
+import { Bot } from './bot.interface';
 import { BotManagerService } from './bot-manager.service';
-import { Bot } from './bots/bot.interface';
-import { ChatService } from './chat.service';
-import { BOT_TOKEN } from './chat.tokens';
 
 const makeMessage = (overrides: Partial<Message> = {}): Message => ({
   id: 'msg-1',

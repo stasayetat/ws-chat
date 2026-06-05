@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
-import { BotManagerService } from './bot-manager.service';
 import { Bot } from './bots/bot.interface';
+import { BotManagerService } from './bots/bot-manager.service';
 import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
 import {
@@ -10,9 +10,9 @@ import {
   MESSAGE_REPOSITORY,
   USER_REPOSITORY,
 } from './chat.tokens';
-import { MemoryMessageRepository } from './repositories/message.repository';
-import { MemoryUserRepository } from './repositories/user.repository';
-import { UserSessionService } from './user-session.service';
+import { MemoryMessageRepository } from './message/message.repository';
+import { MemoryUserRepository } from './user/user.repository';
+import { UserSessionService } from './user/user-session.service';
 
 @Module({
   providers: [
