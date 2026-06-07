@@ -1,0 +1,17 @@
+<div class="chat-layout">
+  <aside class="chat-layout__sidebar">
+    <app-contact-list
+      [contacts]="contacts()"
+      [selectedContactId]="selectedContact()?.id"
+      (contactSelected)="onContactSelected($event)"
+    />
+  </aside>
+
+  <main class="chat-layout__main">
+    <app-chat-area
+      [contact]="selectedContact()"
+      [currentUserId]="currentUser()?.id ?? ''"
+      [userAvatar]="currentUser()?.avatar ?? ''"
+    />
+  </main>
+</div>

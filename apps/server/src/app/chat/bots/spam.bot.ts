@@ -1,5 +1,5 @@
 import { Message } from '@chat/api-interfaces';
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import _ from 'lodash';
 import { setTimeout } from 'timers/promises';
 
@@ -47,12 +47,15 @@ export class SpamBot implements Bot, OnModuleDestroy {
       }
 
       const receiverId = _.sample(recipients);
+      const text = _.sample(PHRASES);
+
+      Logger.log(`Sending ${receiverId}: ${text}`);
 
       send(receiverId, {
         id: crypto.randomUUID(),
         senderId: this.id,
         receiverId,
-        text: _.sample(PHRASES),
+        text,
         timestamp: Date.now(),
       });
     }

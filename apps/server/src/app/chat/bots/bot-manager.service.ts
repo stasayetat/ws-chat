@@ -23,8 +23,8 @@ export class BotManagerService implements OnModuleInit {
       this.chatService.addUser({
         id: bot.id,
         name: bot.name,
-        avatar: '',
         status: 'online',
+        isBot: true,
       });
     }
   }

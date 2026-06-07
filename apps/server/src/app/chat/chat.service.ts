@@ -8,31 +8,48 @@ import { IUserRepository } from './user/user-repository.interface';
 @Injectable()
 export class ChatService {
   constructor(
-    @Inject(USER_REPOSITORY) private readonly users: IUserRepository,
-    @Inject(MESSAGE_REPOSITORY) private readonly messages: IMessageRepository,
+    @Inject(USER_REPOSITORY) private readonly userRepository: IUserRepository,
+    @Inject(MESSAGE_REPOSITORY)
+    private readonly messageRepository: IMessageRepository,
   ) {}
 
   addUser(user: User): void {
-    this.users.save(user);
+    this.userRepository.save(user);
   }
 
   setUserStatus(id: string, status: UserStatus): void {
-    this.users.updateStatus(id, status);
+    this.userRepository.updateStatus(id, status);
   }
 
   getUser(id: string): User | undefined {
-    return this.users.findById(id);
+    return this.userRepository.findById(id);
   }
 
   getContacts(excludeId: string): Contact[] {
-    return this.users.findAll().filter((user) => user.id !== excludeId);
+    return this.userRepository
+      .findAll()
+      .filter((user) => user.id !== excludeId)
+      .map((user) => this.mapLastMessageToContact(excludeId, user));
   }
 
   addMessage(message: Message): void {
-    this.messages.save(message);
+    this.messageRepository.save(message);
   }
 
   getHistory(userId1: string, userId2: string): Message[] {
-    return this.messages.findByConversation(userId1, userId2);
+    return this.messageRepository.findByConversation(userId1, userId2);
   }
+
+  private mapLastMessageToContact = (excludeId: string, user: User) => {
+    const lastMessage = this.messageRepository.findLastByConversation(
+      excludeId,
+      user.id,
+    );
+
+    return {
+      ...user,
+      lastMessage: lastMessage?.text,
+      lastMessageAt: lastMessage?.timestamp,
+    };
+  };
 }

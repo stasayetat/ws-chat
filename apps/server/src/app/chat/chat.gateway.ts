@@ -1,10 +1,4 @@
-import {
-  GetHistoryDto,
-  Message,
-  SendMessageDto,
-  User,
-  UserStatusChangedDto,
-} from '@chat/api-interfaces';
+import { GetHistoryDto, SendMessageDto } from '@chat/api-interfaces';
 import {
   ConnectedSocket,
   MessageBody,
@@ -18,10 +12,8 @@ import {
 import { Server, Socket } from 'socket.io';
 
 import { env } from '../env';
-import { BotManagerService } from './bots/bot-manager.service';
-import { SpamBot } from './bots/spam.bot';
-import { ChatService } from './chat.service';
-import { UserSessionService } from './user/user-session.service';
+import { ChatConnectionService } from './chat-connection.service';
+import { ChatMessageService } from './chat-message.service';
 
 @WebSocketGateway({ cors: { origin: env.CLIENT_URL } })
 export class ChatGateway
@@ -31,60 +23,31 @@ export class ChatGateway
   private server: Server;
 
   constructor(
-    private readonly chatService: ChatService,
-    private readonly sessionService: UserSessionService,
-    private readonly botManager: BotManagerService,
-    private readonly spamBot: SpamBot,
+    private readonly connectionService: ChatConnectionService,
+    private readonly messageService: ChatMessageService,
   ) {}
 
-  afterInit(): void {
-    void this.spamBot.start(
-      () => this.sessionService.getAllUserIds(),
-      (receiverId, msg) => {
-        this.chatService.addMessage(msg);
-        const socketId = this.sessionService.getSocketId(receiverId);
-
-        if (socketId) {
-          this.server.to(socketId).emit('newMessage', msg);
-        }
-      },
-    );
+  afterInit() {
+    void this.messageService.startSpamBot((socketId, msg) => {
+      return this.server.to(socketId).emit('newMessage', msg);
+    });
   }
 
   handleConnection(client: Socket): void {
-    const auth: { name?: string; avatar?: string } = client.handshake.auth;
-
-    if (!auth.name) {
-      client.disconnect();
-
-      return;
-    }
-
-    const user: User = {
-      id: crypto.randomUUID(),
-      name: auth.name,
-      avatar: auth.avatar ?? '',
-      status: 'online',
-    };
-
-    this.chatService.addUser(user);
-    this.sessionService.register(client.id, user.id);
-
-    client.emit('contactsList', this.chatService.getContacts(user.id));
-    client.broadcast.emit('userConnected', user);
+    this.connectionService.handleConnection(client);
   }
 
   handleDisconnect(client: Socket): void {
-    const userId = this.sessionService.unregister(client.id);
+    const payload = this.connectionService.handleDisconnect(client);
 
-    if (!userId) {
-      return;
+    if (payload) {
+      this.server.emit('userStatusChanged', payload);
     }
+  }
 
-    this.chatService.setUserStatus(userId, 'offline');
-
-    const payload: UserStatusChangedDto = { id: userId, status: 'offline' };
-    this.server.emit('userStatusChanged', payload);
+  @SubscribeMessage('getContacts')
+  handleGetContacts(@ConnectedSocket() client: Socket): void {
+    this.messageService.handleGetContacts(client);
   }
 
   @SubscribeMessage('getHistory')
@@ -92,14 +55,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() dto: GetHistoryDto,
   ): void {
-    const userId = this.sessionService.getUserId(client.id);
-
-    if (!userId || !dto.contactId) {
-      return;
-    }
-
-    const messages = this.chatService.getHistory(userId, dto.contactId);
-    client.emit('history', { contactId: dto.contactId, messages });
+    this.messageService.handleGetHistory(client, dto);
   }
 
   @SubscribeMessage('sendMessage')
@@ -107,62 +63,18 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() dto: SendMessageDto,
   ): void {
-    if (!dto.text?.trim()) {
+    const result = this.messageService.processMessage(client, dto);
+
+    if (!result) {
       return;
     }
 
-    const senderId = this.sessionService.getUserId(client.id);
+    client.emit('newMessage', result.message);
 
-    if (!senderId) {
-      return;
-    }
-
-    if (!this.isValidReceiver(dto.receiverId)) {
-      return;
-    }
-
-    const message: Message = {
-      id: crypto.randomUUID(),
-      senderId,
-      receiverId: dto.receiverId,
-      text: dto.text,
-      timestamp: Date.now(),
-    };
-
-    this.chatService.addMessage(message);
-    this.deliverMessage(client, message);
-  }
-
-  private isValidReceiver(receiverId: string): boolean {
-    return (
-      this.botManager.isBotId(receiverId) ||
-      !!this.chatService.getUser(receiverId)
-    );
-  }
-
-  private deliverMessage(client: Socket, message: Message): void {
-    if (this.botManager.isBotId(message.receiverId)) {
-      this.processBotMessage(message, client);
-    } else {
-      this.processUserMessage(message, client);
+    if (result.receiverSocketId) {
+      this.server
+        .to(result.receiverSocketId)
+        .emit('newMessage', result.message);
     }
   }
-
-  private processUserMessage = (message: Message, client: Socket) => {
-    const receiverSocketId = this.sessionService.getSocketId(
-      message.receiverId,
-    );
-
-    if (receiverSocketId) {
-      this.server.to(receiverSocketId).emit('newMessage', message);
-    }
-
-    client.emit('newMessage', message);
-  };
-
-  private processBotMessage = (message: Message, client: Socket) => {
-    this.botManager.routeMessage(message, (event, data) =>
-      client.emit(event, data),
-    );
-  };
 }

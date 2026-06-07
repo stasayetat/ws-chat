@@ -1,0 +1,11 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.chat-area__input-wrapper {
+  padding: 24px;
+  flex-shrink: 0;
+}

@@ -1,0 +1,18 @@
+<div class="chat-header">
+  <img
+    class="chat-header__avatar"
+    [src]="contact.avatar || contact.isBot ? '/assets/bot.svg' : '/assets/user-avatar.svg'"
+    [alt]="contact.name"
+  />
+
+  <div class="chat-header__info">
+    <span class="chat-header__name">{{ contact.name }}</span>
+    <span class="chat-header__status">
+  <span
+    class="chat-header__status-dot"
+    [class.chat-header__status-dot--online]="contact.status === 'online'"
+  ></span>
+      {{ contact.status }}
+</span>
+  </div>
+</div>

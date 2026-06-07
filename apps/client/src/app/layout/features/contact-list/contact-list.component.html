@@ -1,0 +1,75 @@
+<!-- contact-list.component.html -->
+<div class="contact-list">
+  <h2 class="contact-list__title">Chats</h2>
+
+  <div class="contact-list__search">
+    <div class="contact-list__search-box">
+      <svg
+        class="contact-list__search-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+
+      <input
+        class="contact-list__search-input"
+        type="text"
+        placeholder="Search chats"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      />
+    </div>
+  </div>
+
+  <div class="contact-list__items">
+    @for (contact of filteredContacts; track contact.id) {
+      <div
+        class="contact-item"
+        [class.contact-item--active]="contact.id === selectedContactId"
+        (click)="selectContact(contact)"
+      >
+        <img
+          class="contact-item__avatar"
+          [src]="contact.avatar || contact.isBot ? '/assets/bot.svg' : '/assets/user-avatar.svg'"
+          [alt]="contact.name"
+        />
+
+        <div class="contact-item__info">
+          <span class="contact-item__name">{{ contact.name }}</span>
+          <span class="contact-item__last-message">{{ contact.lastMessage }}</span>
+        </div>
+
+        <span class="contact-item__time">{{ formatTime(contact.lastMessageAt) }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="contact-list__tabs">
+    <div class="contact-list__tabs-group">
+      <button
+        class="contact-list__tab"
+        [class.contact-list__tab--active]="filter() === 'all'"
+        (click)="filter.set('all')"
+      >
+        All users
+      </button>
+
+      <button
+        class="contact-list__tab"
+        [class.contact-list__tab--active]="filter() === 'online'"
+        (click)="filter.set('online')"
+      >
+        Online users
+      </button>
+    </div>
+  </div>
+</div>

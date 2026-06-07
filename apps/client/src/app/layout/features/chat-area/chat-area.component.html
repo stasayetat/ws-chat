@@ -1,0 +1,15 @@
+@if (contact) {
+  <app-chat-header [contact]="contact" />
+  <app-message-list
+    [messages]="messages()"
+    [currentUserId]="currentUserId"
+    [contactAvatar]="contact.avatar || contact.isBot ? '/assets/bot.svg' : '/assets/user-avatar.svg'"
+    [contactName]="contact.name"
+    [userAvatar]="userAvatar || '/assets/user-avatar.svg'"
+  />
+  <div class="chat-area__input-wrapper">
+    <app-message-input (messageSent)="onMessageSent($event)" />
+  </div>
+} @else {
+  <div class="chat-area__empty"></div>
+}

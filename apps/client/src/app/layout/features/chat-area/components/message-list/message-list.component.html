@@ -1,0 +1,28 @@
+<div class="message-list" #scrollContainer>
+  @for (message of messages; track message.id; let i = $index) {
+    <div
+      class="message"
+      [class.message--sent]="message.senderId === currentUserId"
+      [class.message--received]="message.senderId !== currentUserId"
+      [class.message--group-start]="isFirstInGroup(i)"
+    >
+      @if (message.senderId !== currentUserId) {
+        @if (isFirstInGroup(i)) {
+          <img class="message__avatar" [src]="contactAvatar" [alt]="contactName" />
+        } @else {
+          <div class="message__avatar-spacer"></div>
+        }
+      }
+
+      <div class="message__bubble">{{ message.text }}</div>
+
+      @if (message.senderId === currentUserId) {
+        @if (isFirstInGroup(i)) {
+          <img class="message__avatar" [src]="userAvatar" alt="You" />
+        } @else {
+          <div class="message__avatar-spacer"></div>
+        }
+      }
+    </div>
+  }
+</div>

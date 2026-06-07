@@ -1,0 +1,24 @@
+<div class="message-input">
+  <input
+    class="message-input__field"
+    type="text"
+    placeholder="Type a message"
+    [(ngModel)]="text"
+    (keydown.enter)="send()"
+  />
+
+  <button
+    class="message-input__button"
+    (click)="send()"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+    </svg>
+  </button>
+</div>

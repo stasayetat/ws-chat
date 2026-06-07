@@ -3,8 +3,9 @@ export type UserStatus = 'online' | 'offline';
 export interface User {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
   status: UserStatus;
+  isBot: boolean;
 }
 
 export interface Contact extends User {
@@ -21,11 +22,6 @@ export interface Message {
   timestamp: number;
 }
 
-export interface ConnectDto {
-  name: string;
-  avatar: string;
-}
-
 export interface SendMessageDto {
   receiverId: string;
   text: string;
@@ -38,4 +34,10 @@ export interface GetHistoryDto {
 export interface UserStatusChangedDto {
   id: string;
   status: UserStatus;
+}
+
+export interface HandshakeAuthDto {
+  name?: string;
+  avatar?: string;
+  userId?: string;
 }

@@ -23,6 +23,12 @@ export class MemoryMessageRepository implements IMessageRepository {
     return this.store.get(conversationKey) ?? [];
   }
 
+  findLastByConversation(userId1: string, userId2: string): Message | undefined {
+    const messages = this.findByConversation(userId1, userId2);
+
+    return messages[messages.length - 1];
+  }
+
   private generateConversationKey(a: string, b: string): string {
     return [a, b].sort().join(':');
   }

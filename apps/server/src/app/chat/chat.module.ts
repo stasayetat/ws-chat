@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { Bot } from './bots/bot.interface';
 import { BotManagerService } from './bots/bot-manager.service';
+import { ChatConnectionService } from './chat-connection.service';
 import { ChatGateway } from './chat.gateway';
+import { ChatMessageService } from './chat-message.service';
 import { ChatService } from './chat.service';
 import {
   BOT_TOKEN,
@@ -17,6 +19,8 @@ import { UserSessionService } from './user/user-session.service';
 @Module({
   providers: [
     ChatGateway,
+    ChatConnectionService,
+    ChatMessageService,
     ChatService,
     UserSessionService,
     BotManagerService,
