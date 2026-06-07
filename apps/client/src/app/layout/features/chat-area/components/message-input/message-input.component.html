@@ -3,11 +3,14 @@
     class="message-input__field"
     type="text"
     placeholder="Type a message"
-    [(ngModel)]="text"
+    #messageInput
+    [value]="text()"
+    (input)="text.set(messageInput.value)"
     (keydown.enter)="send()"
   />
 
   <button
+    type="button"
     class="message-input__button"
     (click)="send()"
   >

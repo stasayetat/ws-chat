@@ -1,78 +1,87 @@
 import {
+  ChangeDetectionStrategy,
   Component,
+  effect,
   inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
+  input,
   signal,
-  SimpleChanges,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Contact, Message } from '@chat/api-interfaces';
-import { Subscription } from 'rxjs';
 
 import { SocketService } from '../../../data/services/socket.service';
+import { AvatarPipe } from '../../../shared/pipes/avatar.pipe';
 import { ChatHeaderComponent } from './components/chat-header/chat-header.component';
 import { MessageInputComponent } from './components/message-input/message-input.component';
 import { MessageListComponent } from './components/message-list/message-list.component';
 
 @Component({
   selector: 'app-chat-area',
-  imports: [ChatHeaderComponent, MessageInputComponent, MessageListComponent],
+  imports: [
+    ChatHeaderComponent,
+    MessageInputComponent,
+    MessageListComponent,
+    AvatarPipe,
+  ],
   templateUrl: './chat-area.component.html',
   styleUrl: './chat-area.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatAreaComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() contact: Contact | null = null;
-  @Input() currentUserId = '';
-  @Input() userAvatar = '';
+export class ChatAreaComponent {
+  contact = input<Contact | null>(null);
+  currentUserId = input('');
+  userAvatar = input('');
 
   private readonly socketService = inject(SocketService);
   readonly messages = signal<Message[]>([]);
 
-  private readonly subs = new Subscription();
-
-  ngOnInit(): void {
-    this.subs.add(
-      this.socketService.history$().subscribe((data) => {
-        if (data.contactId === this.contact?.id) {
+  constructor() {
+    this.socketService
+      .history$()
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        if (data.contactId === this.contact()?.id) {
           this.messages.set(data.messages);
         }
-      }),
-    );
+      });
 
-    this.subs.add(
-      this.socketService.newMessage$().subscribe((msg) => {
+    this.socketService
+      .newMessage$()
+      .pipe(takeUntilDestroyed())
+      .subscribe((msg) => {
         if (this.belongsToConversation(msg)) {
           this.messages.update((current) => [...current, msg]);
         }
-      }),
-    );
-  }
+      });
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['contact'] && this.contact) {
-      this.messages.set([]);
-      this.socketService.getHistory({ contactId: this.contact.id });
-    }
-  }
+    effect(() => {
+      const contact = this.contact();
 
-  ngOnDestroy(): void {
-    this.subs.unsubscribe();
+      if (contact) {
+        this.messages.set([]);
+        this.socketService.getHistory({ contactId: contact.id });
+      }
+    });
   }
 
   onMessageSent(text: string): void {
-    if (this.contact) {
-      this.socketService.sendMessage({ receiverId: this.contact.id, text });
+    const contact = this.contact();
+
+    if (contact) {
+      this.socketService.sendMessage({ receiverId: contact.id, text });
     }
   }
 
   private belongsToConversation(msg: Message): boolean {
-    const contactId = this.contact?.id;
-    if (!contactId) return false;
+    const contactId = this.contact()?.id;
+
+    if (!contactId) {
+      return false;
+    }
+
     return (
-      (msg.senderId === contactId && msg.receiverId === this.currentUserId) ||
-      (msg.senderId === this.currentUserId && msg.receiverId === contactId)
+      (msg.senderId === contactId && msg.receiverId === this.currentUserId()) ||
+      (msg.senderId === this.currentUserId() && msg.receiverId === contactId)
     );
   }
 }

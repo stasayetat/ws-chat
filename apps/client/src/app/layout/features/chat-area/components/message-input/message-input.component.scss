@@ -1,14 +1,12 @@
-// message-input.component.scss
 .message-input {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 48px;
   padding: 10px 20px;
-  border: 2px solid #E2E8F0;
+  border: 2px solid var(--color-border);
   border-radius: 12px;
-  background-color: #FFFFFF;
-  box-sizing: border-box;
+  background-color: #fff;
 
   &__field {
     flex: 1;
@@ -19,7 +17,7 @@
     outline: none;
 
     &::placeholder {
-      color: #999;
+      color: var(--color-text-muted);
     }
   }
 
@@ -31,13 +29,13 @@
     height: 40px;
     background: none;
     border: none;
-    color: #6c5ce7;
+    color: var(--color-primary);
     cursor: pointer;
     border-radius: 50%;
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: #f0f0f0;
+      background-color: var(--color-primary-hover);
     }
   }
 }

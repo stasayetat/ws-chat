@@ -33,7 +33,7 @@
   &__avatar {
     width: 40px;
     height: 40px;
-    border-radius: 8.3px;
+    border-radius: var(--avatar-radius);
     object-fit: cover;
     flex-shrink: 0;
   }
@@ -52,14 +52,14 @@
   }
 
   &--received &__bubble {
-    background-color: #f1f1f1;
+    background-color: var(--color-bg-input);
     color: #000;
     padding: 8px 16px;
     border-radius: 12px;
   }
 
   &--sent &__bubble {
-    background-color: #615ef0;
+    background-color: var(--color-primary);
     color: #fff;
     padding: 8px 16px;
     border-radius: 12px;

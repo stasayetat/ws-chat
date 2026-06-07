@@ -1,3 +1,16 @@
+:root {
+  --color-primary: #615ef0;
+  --color-primary-hover: rgba(97, 94, 240, 0.04);
+  --color-primary-active: rgba(97, 94, 240, 0.06);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-text-muted: rgba(0, 0, 0, 0.4);
+  --color-text-secondary: rgba(0, 0, 0, 0.6);
+  --color-text-faint: rgba(0, 0, 0, 0.3);
+  --color-bg-input: #f3f3f3;
+  --color-online: #68d391;
+  --avatar-radius: 10px;
+}
+
 *,
 *::before,
 *::after {

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
   Contact,
   GetHistoryDto,
@@ -11,31 +11,26 @@ import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 import { environment } from '../../../environments/environment';
-import {
-  getOrCreateUser,
-  SESSION_ID_KEY,
-  StoredUser,
-} from '../../helpers/socket.utils';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocketService {
   private readonly socket: Socket;
-  readonly currentUser: StoredUser;
+  private readonly userService = inject(UserService);
 
   constructor() {
-    this.currentUser = getOrCreateUser();
     this.socket = io(environment.serverUrl, {
       auth: {
-        userId: sessionStorage.getItem(SESSION_ID_KEY) ?? undefined,
-        name: this.currentUser.name,
-        avatar: this.currentUser.avatar,
+        userId: this.userService.currentUser.userId,
+        name: this.userService.currentUser.name,
+        avatar: this.userService.currentUser.avatar,
       },
     });
 
     this.socket.on('me', (user: User) => {
-      sessionStorage.setItem(SESSION_ID_KEY, user.id);
+      this.userService.saveSessionId(user.id);
     });
 
     this.socket.on('connect', () => {

@@ -1,12 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { Contact } from '@chat/api-interfaces';
+
+import { AvatarPipe } from '../../../../../shared/pipes/avatar.pipe';
 
 @Component({
   selector: 'app-chat-header',
   templateUrl: './chat-header.component.html',
   styleUrl: './chat-header.component.scss',
-  imports: [],
+  imports: [AvatarPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatHeaderComponent {
-  @Input() contact!: Contact;
+  contact = input.required<Contact>();
 }

@@ -1,4 +1,3 @@
-<!-- contact-list.component.html -->
 <div class="contact-list">
   <h2 class="contact-list__title">Chats</h2>
 
@@ -21,25 +20,26 @@
       </svg>
 
       <input
+        #searchInput
         class="contact-list__search-input"
         type="text"
         placeholder="Search chats"
-        [ngModel]="searchQuery()"
-        (ngModelChange)="searchQuery.set($event)"
+        [value]="searchQuery()"
+        (input)="searchQuery.set(searchInput.value)"
       />
     </div>
   </div>
 
   <div class="contact-list__items">
-    @for (contact of filteredContacts; track contact.id) {
+    @for (contact of filteredContacts(); track contact.id) {
       <div
         class="contact-item"
-        [class.contact-item--active]="contact.id === selectedContactId"
+        [class.contact-item--active]="contact.id === selectedContactId()"
         (click)="selectContact(contact)"
       >
         <img
           class="contact-item__avatar"
-          [src]="contact.avatar || contact.isBot ? '/assets/bot.svg' : '/assets/user-avatar.svg'"
+          [src]="contact | avatar"
           [alt]="contact.name"
         />
 
@@ -56,6 +56,7 @@
   <div class="contact-list__tabs">
     <div class="contact-list__tabs-group">
       <button
+        type="button"
         class="contact-list__tab"
         [class.contact-list__tab--active]="filter() === 'all'"
         (click)="filter.set('all')"
@@ -64,6 +65,7 @@
       </button>
 
       <button
+        type="button"
         class="contact-list__tab"
         [class.contact-list__tab--active]="filter() === 'online'"
         (click)="filter.set('online')"

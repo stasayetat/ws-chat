@@ -1,28 +1,37 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { Contact } from '@chat/api-interfaces';
+
+import { AvatarPipe } from '../../../shared/pipes/avatar.pipe';
 
 @Component({
   selector: 'app-contact-list',
-  imports: [FormsModule],
+  imports: [AvatarPipe],
   templateUrl: './contact-list.component.html',
   styleUrl: './contact-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactListComponent {
-  @Input() contacts: Contact[] = [];
-  @Input() selectedContactId? = '';
-  @Output() contactSelected = new EventEmitter<Contact>();
+  contacts = input<Contact[]>([]);
+  selectedContactId = input<string | undefined>('');
+  contactSelected = output<Contact>();
 
   searchQuery = signal('');
   filter = signal<'all' | 'online'>('all');
 
-  get filteredContacts(): Contact[] {
-    return this.contacts
+  filteredContacts = computed(() =>
+    this.contacts()
       .filter((c) => this.filter() === 'all' || c.status === 'online')
       .filter((c) =>
         c.name.toLowerCase().includes(this.searchQuery().toLowerCase()),
-      );
-  }
+      ),
+  );
 
   selectContact(contact: Contact): void {
     this.contactSelected.emit(contact);
