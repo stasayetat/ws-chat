@@ -1,4 +1,4 @@
-import { GetHistoryDto, SendMessageDto } from '@chat/api-interfaces';
+import { UseFilters, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,13 +8,29 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
 import { env } from '../env';
 import { ChatConnectionService } from './chat-connection.service';
 import { ChatMessageService } from './chat-message.service';
+import { GetHistoryDtoValidated } from './dtos/get-history.dto';
+import { SendMessageDtoValidated } from './dtos/send-message.dto';
+import { WsExceptionFilter } from './filters/ws-exception.filter';
 
+@UseFilters(new WsExceptionFilter())
+@UsePipes(
+  new ValidationPipe({
+    transform: true,
+    exceptionFactory: (errors) =>
+      new WsException(
+        errors
+          .map((e) => Object.values(e.constraints ?? {}).join(', '))
+          .join('; '),
+      ),
+  }),
+)
 @WebSocketGateway({ cors: { origin: env.CLIENT_URL } })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -53,7 +69,7 @@ export class ChatGateway
   @SubscribeMessage('getHistory')
   handleGetHistory(
     @ConnectedSocket() client: Socket,
-    @MessageBody() dto: GetHistoryDto,
+    @MessageBody() dto: GetHistoryDtoValidated,
   ): void {
     this.messageService.handleGetHistory(client, dto);
   }
@@ -61,7 +77,7 @@ export class ChatGateway
   @SubscribeMessage('sendMessage')
   handleSendMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() dto: SendMessageDto,
+    @MessageBody() dto: SendMessageDtoValidated,
   ): void {
     const result = this.messageService.processMessage(client, dto);
 
