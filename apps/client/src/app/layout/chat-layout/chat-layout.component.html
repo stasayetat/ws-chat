@@ -1,4 +1,4 @@
-<div class="chat-layout">
+<div class="chat-layout" [class.chat-layout--contact-selected]="!!selectedContact()">
   <aside class="chat-layout__sidebar">
     <app-contact-list
       [contacts]="contacts()"
@@ -12,6 +12,7 @@
       [contact]="selectedContact()"
       [currentUserId]="currentUser()?.id ?? ''"
       [userAvatar]="currentUser()?.avatar ?? ''"
+      (backPressed)="onBack()"
     />
   </main>
 </div>

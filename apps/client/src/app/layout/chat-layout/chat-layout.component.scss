@@ -14,4 +14,25 @@
     flex-direction: column;
     background: #fff;
   }
+
+  @media (max-width: 767px) {
+    &__sidebar {
+      width: 100%;
+    }
+
+    &__main {
+      display: none;
+      width: 100%;
+    }
+
+    &--contact-selected {
+      .chat-layout__sidebar {
+        display: none;
+      }
+
+      .chat-layout__main {
+        display: flex;
+      }
+    }
+  }
 }

@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   input,
+  output,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -31,6 +32,7 @@ export class ChatAreaComponent {
   contact = input<Contact | null>(null);
   currentUserId = input('');
   userAvatar = input('');
+  readonly backPressed = output<void>();
 
   private readonly socketService = inject(SocketService);
   readonly messages = signal<Message[]>([]);

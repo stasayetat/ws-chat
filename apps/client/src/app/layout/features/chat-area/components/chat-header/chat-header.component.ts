@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { Contact } from '@chat/api-interfaces';
 
 import { AvatarPipe } from '../../../../../shared/pipes/avatar.pipe';
@@ -12,4 +17,5 @@ import { AvatarPipe } from '../../../../../shared/pipes/avatar.pipe';
 })
 export class ChatHeaderComponent {
   contact = input.required<Contact>();
+  readonly backPressed = output<void>();
 }

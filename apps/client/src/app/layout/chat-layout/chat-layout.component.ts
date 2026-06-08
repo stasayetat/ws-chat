@@ -75,6 +75,10 @@ export class ChatLayoutComponent {
     this.selectedContact.set(contact);
   }
 
+  onBack(): void {
+    this.selectedContact.set(null);
+  }
+
   private updateLastMessageInfo = (message: Message) => {
     const myId = this.currentUser()?.id;
 
