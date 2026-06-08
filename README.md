@@ -18,7 +18,7 @@ A real-time chat web application
 
 ```bash
 git clone https://github.com/stasayetat/ws-chat.git
-cd ws-chat/chat/
+cd ws-chat/
 npm install
 ```
 
