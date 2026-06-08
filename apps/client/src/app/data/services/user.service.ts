@@ -27,7 +27,12 @@ export class UserService {
     const storedUser = sessionStorage.getItem(STORAGE_KEY);
 
     if (storedUser) {
-      return JSON.parse(storedUser) as StoredUser;
+      const parsedUser = JSON.parse(storedUser) as StoredUser;
+
+      return {
+        userId: sessionStorage.getItem(SESSION_ID_KEY) ?? parsedUser.userId,
+        ...parsedUser,
+      };
     }
 
     const user: StoredUser = {

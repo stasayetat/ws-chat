@@ -8,7 +8,7 @@
     [userAvatar]="userAvatar() || '/assets/user-avatar.svg'"
   />
   <div class="chat-area__input-wrapper">
-    <app-message-input (messageSent)="onMessageSent($event)" />
+    <app-message-input (messageSent)="onMessageSent($event)" [activeContactId]="contact()!.id"/>
   </div>
 } @else {
   <div class="chat-area__empty"></div>
