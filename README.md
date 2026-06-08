@@ -17,6 +17,8 @@ A real-time chat web application
 ## Setup
 
 ```bash
+git clone https://github.com/stasayetat/ws-chat.git
+cd ws-chat/chat
 npm install
 ```
 
@@ -48,11 +50,6 @@ npx nx serve server   # http://localhost:3000
 ```
 
 ## Testing
-
-**Client Side:**
-```bash
-npx nx test client
-```
 
 **Server Side:**
 ```bash
