@@ -86,7 +86,7 @@ profiles/
 
 ### User Identity
 - On first visit a random name (`User1234`) is generated and saved to `sessionStorage`
-- On refresh or reconnect the same identity is restored — message history is preserved
+- On refresh or reconnect the same identity is restored - message history is preserved
 
 ### Bots (always online)
 | Bot | Behaviour |
